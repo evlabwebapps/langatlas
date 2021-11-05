@@ -1,12 +1,9 @@
-import React from "react";
-import {Container} from "react-bootstrap";
+import React from 'react';
+import CSVGraph from "../components/CSVGraph";
+
 
 export default function Explore() {
   return (
-    <Container>
-      <p>
-        Some plots
-      </p>
-    </Container>
-  )
-}
+    <CSVGraph table_name="test"/>
+  );
+};
