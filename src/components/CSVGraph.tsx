@@ -1,66 +1,48 @@
-import React, {useState, useEffect} from 'react';
-import {csv} from 'd3';
-import {Bar, CartesianGrid, YAxis, Tooltip, XAxis, BarChart} from "recharts";
-import {Container, Form} from "react-bootstrap";
+import React, {useState, useEffect, ChangeEvent} from 'react';
+import {Bar, CartesianGrid, YAxis, Tooltip, XAxis, BarChart, ResponsiveContainer} from "recharts";
+import {Container, Form, Row} from "react-bootstrap";
+import {CSVData} from '../types/CSV';
 
 
-// @ts-ignore
-const parseRow = columns => row => {
-  columns.forEach((col: string) => row[col] = +row[col]);
-  return row;
+type CSVGraphProps<T> = {
+  csvData: CSVData<T>;
 }
 
-type CSVGraphProps = {
-  table_name: string
-}
+export default function CSVGraph<ParsedRow extends object>(props: CSVGraphProps<ParsedRow>) {
+  const [csvData, setCsvData] = useState<CSVData<ParsedRow>>(props.csvData);
+  const changeDataKey = (e: ChangeEvent<HTMLSelectElement>) => {
+    setCsvData({...csvData, currentGraphColumn: e.target.value});
+  }
 
-export default function CSVGraph(props: CSVGraphProps) {
-  const [data, setData] = useState<any>([]);
-  const [columns, setColumns] = useState<Array<string>>([]);
-  const [dataKey, setDataKey] = useState<string>("");
-
-  useEffect(() => {
-    fetch(process.env.REACT_APP_BACKEND_URL + "/api/csv_tables/" + props.table_name +"/", {
-      "method": "GET",
-      "headers": {
-        "accept": "application/json"
-      }
-    })
-      .then(response => response.json())
-      .then(response => {
-          setColumns(response.columns);
-          setDataKey(response.columns[0]);
-          csv(response.file, parseRow(response.columns)).then(setData).catch(e => console.log(e));
-        }
-      )
-  }, [props.table_name])
+  useEffect(() => setCsvData(props.csvData), [props.csvData]);
 
   return (
     <Container>
-      <BarChart
-        width={800}
-        height={400}
-        data={data}
-      >
-        <XAxis dataKey="subjID"/>
-        <YAxis/>
-        <Tooltip/>
-        <CartesianGrid stroke="#f5f5f5"/>
-        <Bar dataKey={dataKey} fill="#387908"/>
-      </BarChart>
-
-      <Form>
-        <Form.Group controlId="exampleForm.ControlSelect1">
-          <Form.Label>Measure</Form.Label>
-          <Form.Select onChange={(e) => setDataKey(e.target.value)}>
-            {
-              columns.map((column, index) => (
-                <option value={column}>{column}</option>
-              ))
-            }
-          </Form.Select>
-        </Form.Group>
-      </Form>
+      <Row style={{marginBottom: 50, height: 500, padding: "50 0 0 50"}}>
+        <ResponsiveContainer>
+          <BarChart data={csvData?.tableData || []}>
+            <XAxis dataKey="subjID"/>
+            <YAxis/>
+            <Tooltip/>
+            <CartesianGrid stroke="#f5f5f5"/>
+            <Bar dataKey={csvData?.currentGraphColumn || ""} fill="#387908"/>
+          </BarChart>
+        </ResponsiveContainer>
+      </Row>
+      <Row>
+        <Form>
+          <Form.Group controlId="exampleForm.ControlSelect1">
+            <Form.Label>Measure</Form.Label>
+            <Form.Select onChange={changeDataKey}>
+              {
+                csvData?.graphColumns?.map((column, index) => (
+                  <option value={column}>{column}</option>
+                )) || ""
+              }
+            </Form.Select>
+          </Form.Group>
+        </Form>
+      </Row>
     </Container>
   );
 };

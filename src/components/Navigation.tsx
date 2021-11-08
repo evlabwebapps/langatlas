@@ -23,7 +23,7 @@ export default function Navigation() {
         </LinkContainer>
         <Nav className="me-auto">
           {routes.map((route, index) => (
-            <LinkContainer to={route.path}>
+            <LinkContainer to={route.path} exact={route?.exact || false}>
               <Nav.Link>{route.label}</Nav.Link>
             </LinkContainer>
           ))}

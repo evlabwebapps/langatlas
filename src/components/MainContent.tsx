@@ -8,7 +8,7 @@ export default function MainContent() {
   return (
     <Container>
       <Row>
-        <Col md={{span: 6, offset: 0}} style={{padding: '40px 0 0 0'}}>
+        <Col md={{span: 12}} style={{padding: '40px 0 0 0'}}>
           <Switch>
             {routes.map((route, index) => (
               // Render more <Route>s with the same paths as
