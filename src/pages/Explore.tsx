@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {csv} from 'd3';
-import {CSVData} from '../types/CSV';
+import {Column, CSVData} from '../types/CSV';
 import CSVGraph from "../components/CSVGraph";
 import Container from 'react-bootstrap/esm/Container';
 import CSVTable from '../components/CSVTable';
@@ -8,14 +8,18 @@ import {Col, Row} from "react-bootstrap";
 
 
 // @ts-ignore
-const parseRow = columns => row => {
-  columns.forEach((col: string) => row[col] = +row[col]);
+const parseRow = columnOptions => row => {
+  columnOptions.forEach((col: Column) => {
+    if (col.visible && col.type === "numeric") {
+      row[col.title] = +row[col.title];
+    }
+  });
   return row;
 }
 
 
 export default function Explore<ParsedRow extends object>() {
-  const table_name = "test";
+  const table_name = "test_2";
   const [csvData, setCsvData] = useState<CSVData<ParsedRow>>({});
 
   useEffect(() => {
@@ -28,12 +32,14 @@ export default function Explore<ParsedRow extends object>() {
       .then(response => response.json())
       .then(response => {
         csv(response.file, parseRow(response.columns))
-          .then(table_data => setCsvData({
-            tableData: table_data,
-            graphColumns: response.columns,
-            currentGraphColumn: response.columns[0]
-          }))
-          .catch(console.log)
+          .then(table_data => {
+            setCsvData({
+              tableData: table_data,
+              columns: response.columns
+            })
+          })
+          .catch(console.log);
+
       })
   }, []);
 

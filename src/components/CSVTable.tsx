@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import MaterialTable from "material-table";
-import {CSVData} from "../types/CSV";
+import MaterialTable from "@material-table/core";
+import {Column as CSVColumn, CSVData} from "../types/CSV";
 
 
 type CSVTableProps<T> = {
@@ -18,12 +18,26 @@ export default function CSVTable<ParsedRow extends object>(props: CSVTableProps<
   return (
     <div style={{maxWidth: "100%"}}>
       <MaterialTable
-        columns={csvData?.tableData?.columns?.map(column => ({
-          title: column.toString(),
-          field: column.toString()
-        })) || []}
+        columns={
+          csvData?.columns?.map((col: CSVColumn) => (col.visible ? {
+              field: col.field,
+              title: col.title,
+              filtering: col.filtering,
+              ...(col?.type && ({type: col.type})) || {},
+              ...(col?.lookup && ({lookup: col.lookup})) || {}
+            } : {})
+          ) || []
+        }
         data={csvData?.tableData?.map((row: ParsedRow) => row) || []}
         title={props.title}
+        options={{
+          filtering: true,
+          search: false,
+          draggable: false,
+          pageSize: 50,
+          pageSizeOptions: [20, 50, 100, 500],
+          selection: true
+        }}
       />
     </div>
   );

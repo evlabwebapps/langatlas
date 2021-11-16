@@ -1,43 +1,71 @@
 import React, {useState, useEffect, ChangeEvent} from 'react';
-import {Bar, CartesianGrid, YAxis, Tooltip, XAxis, BarChart, ResponsiveContainer} from "recharts";
 import {Container, Form, Row} from "react-bootstrap";
-import {CSVData} from '../types/CSV';
+import {Column, CSVData} from '../types/CSV';
+import { AgChartsReact } from 'ag-charts-react';
 
 
 type CSVGraphProps<T> = {
   csvData: CSVData<T>;
 }
 
-export default function CSVGraph<ParsedRow extends object>(props: CSVGraphProps<ParsedRow>) {
+export default function CSVGraph<ParsedRow extends {tableData?: { checked: boolean }}>(props: CSVGraphProps<ParsedRow>) {
   const [csvData, setCsvData] = useState<CSVData<ParsedRow>>(props.csvData);
-  const changeDataKey = (e: ChangeEvent<HTMLSelectElement>) => {
-    setCsvData({...csvData, currentGraphColumn: e.target.value});
-  }
+  const [plotColumn, setPlotColumn] = useState<Column | null>(null);
 
-  useEffect(() => setCsvData(props.csvData), [props.csvData]);
+  const changeDataKey = (e: ChangeEvent<HTMLSelectElement>) => {
+    const column = csvData?.columns?.find(col => col.field === e.target.value);
+    if (column) { setPlotColumn(column); }
+  };
+
+  const getData = (csvData: CSVData<ParsedRow>) => {
+    let result = csvData?.tableData?.filter(row => row?.tableData?.checked);
+    return (result && result.length > 0) ? result : csvData?.tableData;
+  };
+
+  useEffect(() => {
+    setCsvData(props.csvData);
+    setPlotColumn(props.csvData?.columns?.find(col => col.plot_histogram) || null);
+  }, [props.csvData]);
 
   return (
     <Container>
       <Row style={{marginBottom: 50, height: 500, padding: "50 0 0 50"}}>
-        <ResponsiveContainer>
-          <BarChart data={csvData?.tableData || []}>
-            <XAxis dataKey="subjID"/>
-            <YAxis/>
-            <Tooltip/>
-            <CartesianGrid stroke="#f5f5f5"/>
-            <Bar dataKey={csvData?.currentGraphColumn || ""} fill="#387908"/>
-          </BarChart>
-        </ResponsiveContainer>
+        <AgChartsReact options={{
+          data: getData(csvData),
+          series: [
+            {
+              type: 'histogram',
+              xKey: plotColumn?.field || "",
+              xName: plotColumn?.title || "",
+              binCount: 80,
+            },
+          ],
+          legend: {enabled: false},
+          axes: [
+            {
+              type: 'number',
+              position: 'bottom',
+              title: {text: plotColumn?.field || ""},
+              ...(plotColumn?.min_value !== null && {min: plotColumn?.min_value}),
+              ...(plotColumn?.max_value !== null && {max: plotColumn?.max_value})
+            },
+            {
+              type: 'number',
+              position: 'left',
+              title: {text: 'Number of participants'},
+            },
+          ],
+        }}/>
       </Row>
       <Row>
         <Form>
-          <Form.Group controlId="exampleForm.ControlSelect1">
+          <Form.Group>
             <Form.Label>Measure</Form.Label>
             <Form.Select onChange={changeDataKey}>
               {
-                csvData?.graphColumns?.map((column, index) => (
-                  <option value={column}>{column}</option>
-                )) || ""
+                csvData?.columns?.map((column, index) =>
+                  column.plot_histogram ? (<option value={column.field} key={column.field}>{column.title}</option>) : ""
+                ) || ""
               }
             </Form.Select>
           </Form.Group>
