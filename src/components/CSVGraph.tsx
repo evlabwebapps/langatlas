@@ -6,6 +6,7 @@ import { AgChartsReact } from 'ag-charts-react';
 
 type CSVGraphProps<T> = {
   csvData: CSVData<T>;
+  plotData: T[];
 }
 
 export default function CSVGraph<ParsedRow extends {tableData?: { checked: boolean }}>(props: CSVGraphProps<ParsedRow>) {
@@ -17,9 +18,8 @@ export default function CSVGraph<ParsedRow extends {tableData?: { checked: boole
     if (column) { setPlotColumn(column); }
   };
 
-  const getData = (csvData: CSVData<ParsedRow>) => {
-    let result = csvData?.tableData?.filter(row => row?.tableData?.checked);
-    return (result && result.length > 0) ? result : csvData?.tableData;
+  const getData = () => {
+    return props.plotData.length > 0 ? props.plotData : props.csvData.tableData;
   };
 
   useEffect(() => {
@@ -31,13 +31,13 @@ export default function CSVGraph<ParsedRow extends {tableData?: { checked: boole
     <Container>
       <Row style={{marginBottom: 50, height: 500, padding: "50 0 0 50"}}>
         <AgChartsReact options={{
-          data: getData(csvData),
+          data: getData(),
           series: [
             {
               type: 'histogram',
               xKey: plotColumn?.field || "",
               xName: plotColumn?.title || "",
-              binCount: 80,
+              binCount: 20,
             },
           ],
           legend: {enabled: false},

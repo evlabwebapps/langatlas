@@ -6,6 +6,7 @@ import {Column as CSVColumn, CSVData} from "../types/CSV";
 type CSVTableProps<T> = {
   title: string;
   csvData: CSVData<T>;
+  onSelectionChange: (data: T[], rowData?: T) => void;
 }
 
 export default function CSVTable<ParsedRow extends object>(props: CSVTableProps<ParsedRow>) {
@@ -38,6 +39,7 @@ export default function CSVTable<ParsedRow extends object>(props: CSVTableProps<
           pageSizeOptions: [20, 50, 100, 500],
           selection: true
         }}
+        onSelectionChange={props.onSelectionChange}
       />
     </div>
   );
