@@ -1,17 +1,17 @@
 import React, {useState, useEffect, ChangeEvent} from 'react';
 import {Container, Form, Row} from "react-bootstrap";
-import {Column, CSVData} from '../types/CSV';
+import {IColumn, ICSVData} from '../types/CSV';
 import { AgChartsReact } from 'ag-charts-react';
 
 
 type CSVGraphProps<T> = {
-  csvData: CSVData<T>;
+  csvData: ICSVData<T>;
   plotData: T[];
 }
 
 export default function CSVGraph<ParsedRow extends {tableData?: { checked: boolean }}>(props: CSVGraphProps<ParsedRow>) {
-  const [csvData, setCsvData] = useState<CSVData<ParsedRow>>(props.csvData);
-  const [plotColumn, setPlotColumn] = useState<Column | null>(null);
+  const [csvData, setCsvData] = useState<ICSVData<ParsedRow>>(props.csvData);
+  const [plotColumn, setPlotColumn] = useState<IColumn | null>(null);
 
   const changeDataKey = (e: ChangeEvent<HTMLSelectElement>) => {
     const column = csvData?.columns?.find(col => col.field === e.target.value);
