@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {csv} from 'd3';
-import {IColumn, ICSVData, ICSVTable} from '../types/CSV';
+import {IColumn, ICSVData, ICSVTable, IDownloadOption} from '../types/CSV';
 import CSVGraph from "../components/CSVGraph";
 import Container from 'react-bootstrap/esm/Container';
 import CSVTable from '../components/CSVTable';
@@ -22,6 +22,7 @@ const parseRow = columnOptions => row => {
 export default function Explore<ParsedRow extends object>() {
   const table_name = "test_2";
   const [csvData, setCsvData] = useState<ICSVData<ParsedRow>>({});
+  const [downloadOptions, setDownloadOptions] = useState<IDownloadOption[]>([]);
   const [plotData, setPlotData] = useState<ParsedRow[]>([]);
 
   const loadCSV = (table: ICSVTable) => {
@@ -37,7 +38,9 @@ export default function Explore<ParsedRow extends object>() {
 
   useEffect(() => {
     CSVTableService.get(table_name)
-      .then((response: any) => loadCSV(response.data))
+      .then((response: any) => loadCSV(response.data));
+    CSVTableService.getDownloadOptions(table_name)
+      .then((response: any) => setDownloadOptions(response.data));
   }, []);
 
   return (
@@ -47,7 +50,12 @@ export default function Explore<ParsedRow extends object>() {
       </Row>
       <Row>
         <Col md={{span: 12}}>
-          <CSVTable csvData={csvData} title="Table title" onSelectionChange={setPlotData} />
+          <CSVTable
+            csvData={csvData}
+            title="Table title"
+            onSelectionChange={setPlotData}
+            downloadOptions={downloadOptions}
+          />
         </Col>
       </Row>
     </Container>

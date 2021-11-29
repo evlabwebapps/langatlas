@@ -1,6 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import MaterialTable, { MTableActions } from "@material-table/core";
-import {CreateArchiveStatus, IColumn, ICreateArchiveResponse, ICSVData} from "../types/CSV";
+import {
+  CreateArchiveStatus,
+  IColumn,
+  ICreateArchiveResponse,
+  ICSVData,
+  IDownloadOption
+} from "../types/CSV";
 import CSVTableService from "../services/CSVTableService";
 import DownloadAlert, {DownloadAlertProps} from "./DownloadAlert";
 
@@ -9,11 +15,12 @@ type CSVTableProps<T> = {
   title: string;
   csvData: ICSVData<T>;
   onSelectionChange: (data: T[], rowData?: T) => void;
+  downloadOptions: IDownloadOption[];
 }
 
 export default function CSVTable<ParsedRow extends object>(props: CSVTableProps<ParsedRow>) {
   const [csvData, setCsvData] = useState<ICSVData<ParsedRow>>(props.csvData);
-  const [downloadAlertProps, setDownloadAlertProps] = useState<DownloadAlertProps>({show: false})
+  const [downloadAlertProps, setDownloadAlertProps] = useState<DownloadAlertProps>({status: "hidden"})
 
   const waitArchive = (data: ICreateArchiveResponse) => {
     setTimeout(function run() {
@@ -23,66 +30,41 @@ export default function CSVTable<ParsedRow extends object>(props: CSVTableProps<
             response.data.status === CreateArchiveStatus.Created) {
             setTimeout(run, 2000);
           } else if (response.data.status === CreateArchiveStatus.Failed) {
-            setDownloadAlertProps({
-              show: true,
-              success: false
-            });
+            setDownloadAlertProps({status: "error"});
           } else if (response.data.status === CreateArchiveStatus.Success) {
             setDownloadAlertProps({
               link: process.env.REACT_APP_BACKEND_URL + response.data.archive_file,
-              show: true,
-              success: true
+              status: "success"
             });
           }
         })
         .catch((reason: any) => {
-          setDownloadAlertProps({
-            show: true,
-            success: false
-          });
+          setDownloadAlertProps({status: "error"});
         })
     }, 2000);
   };
-
-  const getActions = () => {
-    return [
-      {
-        tooltip: 'SPM',
-        icon: 'download',
-        onClick: (event: any, data: ParsedRow | ParsedRow[]) => {
-          if (!(data instanceof Array)) {
-            return;
-          }
-          setDownloadAlertProps({show: false});
-          // @ts-ignore
-          const rows = data.map(r => r.UID);
-          CSVTableService.createArchive(
-            {
-              download_batch: "89f26a6f-d36c-40ae-bebc-4f9b6a0510fa",
-              rows: rows
-            }
-          ).then((response: any) => waitArchive(response.data));
+  const getAction = (downloadOption: IDownloadOption) => {
+    return {
+      tooltip: downloadOption.title,
+      icon: 'download',
+      onClick: (event: any, data: ParsedRow | ParsedRow[]) => {
+        if (!(data instanceof Array)) {
+          return;
         }
-      },
-      {
-        tooltip: 'FS',
-        icon: 'download',
-        onClick: (event: any, data: ParsedRow | ParsedRow[]) => {
-          if (!(data instanceof Array)) {
-            return;
+        setDownloadAlertProps({status: "pending"});
+        // @ts-ignore
+        const rows = data.map(r => r.UID);
+        CSVTableService.createArchive(
+          {
+            download_batch: downloadOption.id,
+            rows: rows
           }
-          setDownloadAlertProps({show: false});
-          // @ts-ignore
-          const rows = data.map(r => r.UID);
-          CSVTableService.createArchive(
-            {
-              download_batch: "9b4d9dff-55ea-4ac4-befe-20f482dc9131",
-              rows: rows
-            }
-          ).then((response: any) => waitArchive(response.data));
-        }
+        ).then((response: any) => waitArchive(response.data));
       }
-    ]
+    }
+  }
+  const getActions = () => {
+    return props.downloadOptions.map(getAction);
   };
 
   useEffect(() => {

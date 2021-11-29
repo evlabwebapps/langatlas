@@ -53,3 +53,8 @@ export interface ICSVData<T> {
   tableData?: DSVParsedArray<T>;
   columns?: Array<IColumn>;
 }
+
+export interface IDownloadOption {
+  id: string;
+  title: string;
+}

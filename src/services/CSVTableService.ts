@@ -5,7 +5,7 @@ const get = (table_name: string) => {
   return http.get<ICSVTable>("/csv_tables/" + table_name + "/");
 };
 
-const getDownloads = (table_name: string) => {
+const getDownloadOptions = (table_name: string) => {
   return http.get<Array<IDownloadOption>>("/downloads/?table=" + table_name);
 }
 
@@ -19,7 +19,7 @@ const getArchive = (archive_id: string) => {
 
 const CSVTableService = {
   get,
-  getDownloads,
+  getDownloadOptions,
   createArchive,
   getArchive,
 };
