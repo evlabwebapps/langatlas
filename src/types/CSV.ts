@@ -7,15 +7,16 @@ export interface IColumn {
   filtering: boolean;
   type?: "string"
     | "boolean"
-    | "numeric"
-    | "date"
-    | "datetime"
-    | "time"
-    | "currency";
+    | "number"
+    | "date";
   lookup: object;
   plot_histogram: boolean;
   min_value?: number;
   max_value?: number;
+}
+
+export interface IRow {
+  [key: string]: any;
 }
 
 export interface ICSVTable {

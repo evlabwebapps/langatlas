@@ -1,114 +1,99 @@
-import React, {useState, useEffect} from 'react';
-import MaterialTable, { MTableActions } from "@material-table/core";
-import {
-  CreateArchiveStatus,
-  IColumn,
-  ICreateArchiveResponse,
-  ICSVData,
-  IDownloadOption
-} from "../types/CSV";
-import CSVTableService from "../services/CSVTableService";
-import DownloadAlert, {DownloadAlertProps} from "./DownloadAlert";
+import React, {useCallback, useState} from 'react';
 
+import ReactDataGrid from '@inovua/reactdatagrid-community';
+import '@inovua/reactdatagrid-community/index.css'
+import NumberFilter from "@inovua/reactdatagrid-community/NumberFilter";
+import StringFilter from "@inovua/reactdatagrid-community/StringFilter";
+import BoolFilter from "@inovua/reactdatagrid-community/BoolFilter";
+import DateFilter from "@inovua/reactdatagrid-community/DateFilter";
 
-type CSVTableProps<T> = {
-  title: string;
-  csvData: ICSVData<T>;
-  onSelectionChange: (data: T[], rowData?: T) => void;
-  downloadOptions: IDownloadOption[];
+import {IColumn, IRow} from "../types/CSV";
+
+type CSVTableProps = {
+  rows: IRow[];
+  columns: IColumn[];
+  onSelectionChange: (selected: number[]) => void;
 }
 
-export default function CSVTable<ParsedRow extends object>(props: CSVTableProps<ParsedRow>) {
-  const [csvData, setCsvData] = useState<ICSVData<ParsedRow>>(props.csvData);
-  const [downloadAlertProps, setDownloadAlertProps] = useState<DownloadAlertProps>({status: "hidden"})
-
-  const waitArchive = (data: ICreateArchiveResponse) => {
-    setTimeout(function run() {
-      CSVTableService.getArchive(data.id)
-        .then((response: any) => {
-          if (response.data.status === CreateArchiveStatus.Pending ||
-            response.data.status === CreateArchiveStatus.Created) {
-            setTimeout(run, 2000);
-          } else if (response.data.status === CreateArchiveStatus.Failed) {
-            setDownloadAlertProps({status: "error"});
-          } else if (response.data.status === CreateArchiveStatus.Success) {
-            setDownloadAlertProps({
-              link: process.env.REACT_APP_BACKEND_URL + response.data.archive_file,
-              status: "success"
-            });
-          }
-        })
-        .catch((reason: any) => {
-          setDownloadAlertProps({status: "error"});
-        })
-    }, 2000);
-  };
-  const getAction = (downloadOption: IDownloadOption) => {
-    return {
-      tooltip: downloadOption.title,
-      icon: 'download',
-      onClick: (event: any, data: ParsedRow | ParsedRow[]) => {
-        if (!(data instanceof Array)) {
-          return;
-        }
-        setDownloadAlertProps({status: "pending"});
-        // @ts-ignore
-        const rows = data.map(r => r.UID);
-        CSVTableService.createArchive(
-          {
-            download_batch: downloadOption.id,
-            rows: rows
-          }
-        ).then((response: any) => waitArchive(response.data));
-      }
-    }
+const getFilterEditor = (column: IColumn) => {
+  if (!column.filtering) {
+    return undefined;
   }
-  const getActions = () => {
-    return props.downloadOptions.map(getAction);
-  };
+  switch (column.type) {
+    case  "string":
+      return StringFilter;
+    case "boolean":
+      return BoolFilter;
+    case  "number":
+      return NumberFilter;
+    case    "date":
+      return DateFilter;
+    default:
+      return undefined;
+  }
+}
 
-  useEffect(() => {
-    setCsvData(props.csvData);
-  }, [props.csvData]);
+const getGridColumns = (columns: IColumn[]) => columns
+  ?.filter(col => col.visible)
+  ?.map(col => ({
+      name: col.field,
+      header: col.title,
+      type: col.type,
+      filterEditor: getFilterEditor(col),
+    })
+  );
+
+const getGridDataSource = <T extends { [key: string]: any }>(columns: IColumn[], rows: T[]) => {
+  const visibleColumns = columns?.filter(c => c.visible).map(c => c.field) || [];
+  return rows?.map(
+    (row: T) => visibleColumns.reduce(
+      (obj, key) => ({...obj, [key]: row[key]}), {}
+    )
+  ) || [];
+};
+
+const getDefaultFilter = (column: IColumn) => {
+  return {
+    name: column.field,
+    type: column.type || "string",
+    operator: 'eq',
+    value: '',
+    active: false
+  }
+}
+
+const getGridFilterValue = (columns: IColumn[]) =>
+  columns
+    .filter(col => col.filtering)
+    .map(col => getDefaultFilter(col)
+    );
+
+export default function CSVTable(props: CSVTableProps) {
+  const [selected, setSelected] = useState({});
+
+  const onSelectionChange = useCallback(({selected}) => {
+    setSelected(selected);
+    // @ts-ignore
+    props.onSelectionChange(Object.values(selected).map(row => row['UID']));
+  }, [props]);
+
+  const gridStyle = {minHeight: 550, overflowY: 'hidden'};
+  const columns = getGridColumns(props.columns);
+  const dataSource = getGridDataSource(props.columns, props.rows);
+  const filterValue = getGridFilterValue(props.columns);
 
   return (
-    <div>
-      <DownloadAlert {...downloadAlertProps}/>
-      <MaterialTable
-        columns={
-          csvData?.columns?.map((col: IColumn) => (col.visible ? {
-              field: col.field,
-              title: col.title,
-              filtering: col.filtering,
-              ...(col?.type && ({type: col.type})) || {},
-              ...(col?.lookup && ({lookup: col.lookup})) || {}
-            } : {})
-          ) || []
-        }
-        data={csvData?.tableData?.map((row: ParsedRow) => row) || []}
-        title={props.title}
-        options={{
-          filtering: true,
-          search: false,
-          draggable: false,
-          pageSize: 50,
-          pageSizeOptions: [20, 50, 100, 500],
-          selection: true
-        }}
-        onSelectionChange={props.onSelectionChange}
-        actions={getActions()}
-        components={{
-          Actions: props => {
-            return (
-              <div style={{display: "flex", alignItems: "center"}}>
-                <div style={{display: props.actions.length > 0 ? "block" : "none"}}>
-                  Download:&nbsp;&nbsp;
-                </div>
-                <MTableActions {...props}/>
-              </div>
-            )
-          }
-        }}
+    <div style={{marginBottom: '30px'}}>
+      <ReactDataGrid
+        idProperty="UID"
+        columns={columns}
+        dataSource={dataSource}
+        defaultFilterValue={filterValue}
+        selected={selected}
+        checkboxColumn
+        onSelectionChange={onSelectionChange}
+        style={gridStyle}
+        nativeScroll={true}
       />
     </div>
   );

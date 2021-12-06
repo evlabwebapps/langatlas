@@ -6,8 +6,8 @@ export default function Home() {
     <Container>
       <h1>Welcome to LanA!</h1>
       <p>
-        LanA is the Fedorenko Lab Language Atlas created based on language localizer data
-        from &gt; 800 individuals.
+        LanA (<b>Lan</b>guage <b>A</b>tlas) is the Fedorenko Lab probabilistic atlas of the
+        language network created based on language localizer data from &gt;800 individuals.
       </p>
     </Container>
   )
