@@ -16,6 +16,7 @@ import DownloadAlert, {DownloadAlertProps} from "../components/DownloadAlert";
 import TableActions from "../components/TableActions";
 import {ArrowClockwise, Download} from "react-bootstrap-icons";
 import Histogram from "../components/Histogram";
+import SummaryDemographics from "../components/SummaryDemographics";
 
 
 export default function Explore() {
@@ -184,13 +185,7 @@ export default function Explore() {
             of the language parcels)
           </p>
           <p>
-            Summary demographics of this population: <br/>
-            Age: average XX.XX (st. dev. XX.XX), range XX-XX <br/>
-            Gender: XX.XX% male, XX.XX% female <br/>
-            Handedness: XX.XX% right-handed, XX.XX% left-handed, XX.XX% ambidextrous (XX.XX% no
-            handedness info) <br/>
-            Native English speaker status: XX.XX% native speakers, XX.XX% native speakers of other
-            languages and proficient speakers of English
+            <SummaryDemographics selectedRows={histogramRows}/>
           </p>
         </Col>
         <Col md={2} xs={0}/>
