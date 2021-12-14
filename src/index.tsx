@@ -5,7 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import moment from 'moment';
 
+window.moment = moment;
 
 ReactDOM.render(
   <React.StrictMode>

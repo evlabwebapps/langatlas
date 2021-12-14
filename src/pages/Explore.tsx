@@ -1,18 +1,14 @@
 import React, {useState, useEffect, useCallback, useMemo} from 'react';
 
-import {csv} from 'd3';
 import Container from 'react-bootstrap/esm/Container';
-import {Col, Row, Stack} from "react-bootstrap";
+import {Col, Row} from "react-bootstrap";
 
 import parcel from "../parcel.png";
 import {
   CreateArchiveStatus,
-  IColumn,
   ICreateArchiveResponse,
-  ICSVData,
   ICSVTable,
   IDownloadOption,
-  IRow
 } from '../types/CSV';
 import CSVTableService from "../services/CSVTableService";
 import CSVTable from '../components/CSVTable';
@@ -22,39 +18,18 @@ import {ArrowClockwise, Download} from "react-bootstrap-icons";
 import Histogram from "../components/Histogram";
 
 
-const parseRow = (columnOptions: IColumn[]) => (row: IRow) => {
-  columnOptions.forEach((col: IColumn) => {
-    if (col.type === "number" || col.plot_histogram) {
-      row[col.field] = +row[col.field];
-    }
-  });
-  return row;
-}
-
-
 export default function Explore() {
   const table_name = "test_2";
-  const [csvData, setCsvData] = useState<ICSVData<IRow>>({});
+  const [csvTable, setCSVTable] = useState<ICSVTable | null>(null);
   const [downloadOptions, setDownloadOptions] = useState<IDownloadOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [selectedRowsForHistogram, setSelectedRowsForHistogram] = useState<number[]>([]);
   const [downloadAlertProps, setDownloadAlertProps] = useState<DownloadAlertProps>({status: "hidden"});
 
-  const loadCSV = (table: ICSVTable) => {
-    csv(table.file, parseRow(table.columns))
-      .then(table_data => {
-        setCsvData({
-          tableData: table_data,
-          columns: table.columns
-        })
-      })
-      .catch(console.log);
-  }
-
   useEffect(() => {
     CSVTableService.get(table_name)
-      .then((response: any) => loadCSV(response.data));
+      .then((table: ICSVTable) => setCSVTable(table));
     CSVTableService.getDownloadOptions(table_name)
       .then((response: any) => setDownloadOptions(response.data));
   }, []);
@@ -105,13 +80,13 @@ export default function Explore() {
 
   const histogramRows = useMemo(() =>
       selectedRowsForHistogram.length > 0
-        ? csvData.tableData?.filter(row => selectedRowsForHistogram.includes(row['UID']))
-        : csvData.tableData,
-    [selectedRowsForHistogram, csvData.tableData]);
+        ? csvTable?.csvData?.filter(row => selectedRowsForHistogram.includes(row['UID']))
+        : csvTable?.csvData,
+    [selectedRowsForHistogram, csvTable?.csvData]);
 
   const histogramColumns = useMemo(() =>
-      csvData.columns?.filter(c => c.plot_histogram),
-    [csvData.columns]);
+      csvTable?.columns?.filter(c => c.plot_histogram),
+    [csvTable?.columns]);
 
   const tableActionGroups = useMemo(() => (
     [
@@ -218,7 +193,7 @@ export default function Explore() {
             languages and proficient speakers of English
           </p>
         </Col>
-        <Col md={2} xs={0} />
+        <Col md={2} xs={0}/>
       </Row>
       <Row style={{marginBottom: '1rem'}}>
         <Histogram
@@ -240,16 +215,15 @@ export default function Explore() {
       <Row>
         <Col md={{span: 12}}>
           {
-            (csvData.tableData?.length || 0) > 0 &&
+            (csvTable?.csvData?.length || 0) > 0 &&
             <CSVTable
-                rows={csvData.tableData ? csvData.tableData : []}
-                columns={csvData.columns ? csvData.columns : []}
+                rows={csvTable?.csvData ? csvTable?.csvData : []}
+                columns={csvTable?.columns ? csvTable?.columns : []}
                 onSelectionChange={setSelectedRows}
             />
           }
         </Col>
       </Row>
     </Container>
-  )
-    ;
+  );
 };

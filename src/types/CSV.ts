@@ -8,11 +8,14 @@ export interface IColumn {
   type?: "string"
     | "boolean"
     | "number"
-    | "date";
+    | "date"
+    | "select";
   lookup: object;
   plot_histogram: boolean;
   min_value?: number;
   max_value?: number;
+  default_operator?: string;
+  width?: number;
 }
 
 export interface IRow {
@@ -23,6 +26,7 @@ export interface ICSVTable {
   name: string;
   file: string;
   columns: Array<IColumn>;
+  csvData?: IRow[];
 }
 
 export interface IDownloadOption {

@@ -37,7 +37,7 @@ export default function Histogram(props: HistogramProps) {
               type: 'histogram',
               xKey: selectedColumn?.field || "",
               xName: selectedColumn?.title || "",
-              binCount: 15,
+              binCount: 8,
               fill: '#dc3545'
             },
           ],
@@ -46,14 +46,14 @@ export default function Histogram(props: HistogramProps) {
             {
               type: 'number',
               position: 'bottom',
-              title: {text: selectedColumn?.field || ""},
+              title: {enabled: true, text: selectedColumn?.title || ""},
               ...(selectedColumn?.min_value !== null && {min: selectedColumn?.min_value}),
               ...(selectedColumn?.max_value !== null && {max: selectedColumn?.max_value})
             },
             {
               type: 'number',
               position: 'left',
-              title: {text: 'Number of participants'},
+              title: {enabled: true, text: 'Number of participants'},
             },
           ],
           formatter: {}

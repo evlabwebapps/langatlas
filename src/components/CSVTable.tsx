@@ -8,6 +8,7 @@ import BoolFilter from "@inovua/reactdatagrid-community/BoolFilter";
 import DateFilter from "@inovua/reactdatagrid-community/DateFilter";
 
 import {IColumn, IRow} from "../types/CSV";
+import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
 
 type CSVTableProps = {
   rows: IRow[];
@@ -28,8 +29,33 @@ const getFilterEditor = (column: IColumn) => {
       return NumberFilter;
     case    "date":
       return DateFilter;
+    case  "select":
+      return SelectFilter;
     default:
       return undefined;
+  }
+}
+
+const getFilterEditorProps = (column: IColumn) => {
+  if (!column.filtering || !column.lookup) {
+    return undefined;
+  }
+  if (column.type === "select") {
+    return {
+      placeholder: 'All',
+      dataSource: Object.entries(column.lookup).map(([key, value]) => ({id: key, label: value}))
+    };
+  }
+  if (column.type === "date") {
+    // @ts-ignore
+    return (props, { index }) => {
+      return {
+        dateFormat: 'YYYY-MM-DD',
+        cancelButton: false,
+        highlightWeekends: false,
+        placeholder: index === 1 ? 'before': 'after'
+      }
+    }
   }
 }
 
@@ -40,6 +66,8 @@ const getGridColumns = (columns: IColumn[]) => columns
       header: col.title,
       type: col.type,
       filterEditor: getFilterEditor(col),
+      filterEditorProps: getFilterEditorProps(col),
+      width: col.width || 150
     })
   );
 
@@ -56,17 +84,15 @@ const getDefaultFilter = (column: IColumn) => {
   return {
     name: column.field,
     type: column.type || "string",
-    operator: 'eq',
-    value: '',
-    active: false
+    operator: column.default_operator || "eq",
+    value: column.type !== "date" ? null : ''
   }
 }
 
 const getGridFilterValue = (columns: IColumn[]) =>
   columns
     .filter(col => col.filtering)
-    .map(col => getDefaultFilter(col)
-    );
+    .map(col => getDefaultFilter(col));
 
 export default function CSVTable(props: CSVTableProps) {
   const [selected, setSelected] = useState({});
