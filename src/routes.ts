@@ -1,4 +1,4 @@
-import {Download, Explore, Home, Language, LocalizerInfo, ExploreActivationMaps} from "./pages";
+import {Download, ExploreNeuralMarkers, Home, Language, LocalizerInfo, ExploreActivationMaps} from "./pages";
 
 export const routes = [
   {
@@ -10,7 +10,7 @@ export const routes = [
   {
     path: "/explore-neural-markers",
     label: "Explore Neural Markers",
-    child: Explore
+    child: ExploreNeuralMarkers
   },
   {
     path: "/explore-activation-maps",

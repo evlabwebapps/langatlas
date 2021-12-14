@@ -19,7 +19,7 @@ import Histogram from "../components/Histogram";
 import SummaryDemographics from "../components/SummaryDemographics";
 
 
-export default function Explore() {
+export default function ExploreNeuralMarkers() {
   const table_name = "test_2";
   const [csvTable, setCSVTable] = useState<ICSVTable | null>(null);
   const [downloadOptions, setDownloadOptions] = useState<IDownloadOption[]>([]);
@@ -197,6 +197,12 @@ export default function Explore() {
         />
       </Row>
       <div className="d-flex align-items-center" style={{marginBottom: '1rem', width: '100%'}}>
+        {
+          (selectedRows.length > 0) &&
+          <div style={{marginRight: '0.5rem'}}>
+            {selectedRows.length} participant{selectedRows.length > 1 ? "s" : ""} selected
+          </div>
+        }
         <div className="flex-grow-1">
           <DownloadAlert {...downloadAlertProps} />
         </div>
