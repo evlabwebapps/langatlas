@@ -9,7 +9,7 @@ type SummaryDemographicsProps = {
 export default function SummaryDemographics(props: SummaryDemographicsProps) {
   const stats = useMemo(() => {
     if (!props.selectedRows) return undefined;
-    const age = props.selectedRows.map(row => row.Age);
+    const age = props.selectedRows.map(row => row.Age).filter(age => !isNaN(age));
     const gender = props.selectedRows.map(row => row.Gender);
     const hand = props.selectedRows.map(row => row.Handedness);
     const nativeEnglish = props.selectedRows.map(row => row.NativeEnglish);
@@ -38,9 +38,9 @@ export default function SummaryDemographics(props: SummaryDemographicsProps) {
   }, [props.selectedRows]);
 
   return (
-    <>
-      <h3>Summary demographics of this population</h3>
-      {(stats && <>
+    <div className="alert alert-dark" role="alert">
+      <h4 className="alert-heading">Summary demographics of this population</h4>
+      {(stats && <p>
           <b>Age: </b>
             average {stats.age.average} (st. dev. {stats.age.std}),&nbsp;
             range {stats.age.min}-{stats.age.max} <br/>
@@ -56,8 +56,8 @@ export default function SummaryDemographics(props: SummaryDemographicsProps) {
             {stats.nativeEnglish.yes}% native speakers,&nbsp;
             {stats.nativeEnglish.no}% native speakers of other
               languages and proficient speakers of English
-      </>) || <i>No rows selected</i>}
+      </p>) || <i>No rows selected</i>}
 
-    </>
+    </div>
   );
 }

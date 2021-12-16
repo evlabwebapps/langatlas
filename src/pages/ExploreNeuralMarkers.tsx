@@ -132,7 +132,7 @@ export default function ExploreNeuralMarkers() {
             performed
             on a smaller set of n=25 participants). The parcels are shown below.
           </p>
-          <img src={parcel} alt={"parcel"} width={"100%"}/>
+          <img src={parcel} alt={"parcel"} width={"45%"} style={{margin: '5px', float: 'left'}}/>
           <p>
             We include three sets of measures:
           </p>

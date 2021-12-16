@@ -16,6 +16,7 @@ export interface IColumn {
   max_value?: number;
   default_operator?: string;
   width?: number;
+  nan_value?: string;
 }
 
 export interface IRow {

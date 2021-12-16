@@ -10,8 +10,12 @@ import {csv} from "d3";
 
 const parseRow = (columnOptions: IColumn[]) => (row: IRow) => {
   columnOptions.forEach((col: IColumn) => {
+    // Cast to number or NaN
     if (col.type === "number" || col.plot_histogram) {
       row[col.field] = +row[col.field];
+      if (col.nan_value && row[col.field] === +col.nan_value) {
+        row[col.field] = NaN;
+      }
     }
   });
   return row;

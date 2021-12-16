@@ -22,10 +22,10 @@ export default function Histogram(props: HistogramProps) {
   useEffect(() => {
     setData(props.data);
     setColumns(props.columns);
-    if (props.columns.length > 0) {
+    if (props.columns.length > 0 && !selectedColumn) {
       setSelectedColumn(props.columns[0]);
     }
-  }, [props.data, props.columns]);
+  }, [selectedColumn, props.data, props.columns]);
 
   return (
     <Container>
