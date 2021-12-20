@@ -15,26 +15,7 @@ export default function ExploreActivationMaps(props: any) {
       .then((table: ICSVTable) => setCSVTable(table));
   }, []);
 
-  const selectedImages = useMemo(() =>
-      csvTable?.csvData
-        ?.filter(row => selectedRows.includes(row.UID))
-        ?.map(({UID, SPM_T_png}) => ({UID, url: SPM_T_png})) || [],
-    [csvTable, selectedRows]);
-
   return <>
-    <Gallery images={selectedImages}/>
-
-    <Row>
-      <Col md={{span: 12}}>
-        {
-          (csvTable?.csvData?.length || 0) > 0 &&
-          <CSVTable
-              rows={csvTable?.csvData ? csvTable.csvData : []}
-              columns={csvTable?.columns ? csvTable.columns : []}
-              onSelectionChange={setSelectedRows}
-          />
-        }
-      </Col>
-    </Row>
+    <Gallery experiments={csvTable?.csvData}/>
   </>;
 }

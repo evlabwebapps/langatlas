@@ -1,43 +1,84 @@
-# Getting Started with Create React App
+# LanA
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## How to add a new page
+Navigation bar is defined at `./components/Navigation.tsx` file. In order to add 
+a new page to navbar you must define a new page inside `./pages` and add route 
+at `routes.ts` file. Also do not forget to export page by updating `./pages/index.tsx`.
 
-## Available Scripts
+## How to build and push image to DockerHub
 
-In the project directory, you can run:
+```bash
+yarn build
+docker build --tag <your-username>/evlabwebapps-langatlas:latest .
+docker push <your-username>/evlabwebapps-langatlas:latest
+```
+OR edit and run `build_push.sh` script.
 
-### `yarn start`
+## How to deploy on the server (same as for backend)
+You need to enter Vagrant VM, pull Docker images and recreate containers with updated images.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+On HPC:
+```bash
+cd /om2/user/amirov/vagrant_images/evlabwebapps/
+vagrant ssh
+```
+Inside VM:
+```bash
+docker-compose pull
+docker-compose up -d
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Docker-compose on VM that is common for frontend and backend
+```yaml
+version: '3.5'
 
-### `yarn test`
+services:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  admin:
+    image: aamirov/evlab-web-apps-admin:latest
+    build: .
+    env_file: '.env'
+    volumes:
+      - './assets:/app/assets'
+      - './backend-data:/app/data'
+    ports:
+      - 8000:8000
+    networks:
+      - backend
 
-### `yarn build`
+  redis:
+    image: redis:5-alpine
+    networks:
+      - backend
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  celery:
+    image: aamirov/evlab-web-apps-admin:latest
+    build: .
+    env_file: '.env'
+    volumes:
+      - './assets:/app/assets'
+      - './backend-data:/app/data'
+    networks:
+      - backend
+    command: celery -A src.evlabwebapps worker -l INFO
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  celery-beat:
+    image: aamirov/evlab-web-apps-admin:latest
+    build: .
+    env_file: '.env'
+    networks:
+      - backend
+    command: celery -A src.evlabwebapps beat -l INFO
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  frontend:
+    image: aamirov/evlabwebapps-langatlas:latest
+    ports:
+      - 8760:8760
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+networks:
+  backend:
+    name: evlabwebapps
+```
 
 ## Learn More
 

@@ -1,7 +1,9 @@
+/* Simple module that provides statistical functions */
+
 const Statistics = {
   max: (array: number[]) => Math.max.apply(null, array),
   min: (array: number[]) => Math.min.apply(null, array),
-  sum: (array: number[]) => array.reduce((sum, curr) => sum + curr),
+  sum: (array: number[]) => array.reduce((sum, curr) => sum + curr, 0),
   mean: (array: number[]) => Statistics.sum(array) / array.length,
   variance: (array: number[]) => {
     if (array.length === 0) {

@@ -1,3 +1,5 @@
+/* Service that provides API for CSV tables and downloads */
+
 import http from "../http-common";
 import {
   ICSVTable,

@@ -3,7 +3,7 @@ import React, {useState, useEffect, useCallback, useMemo} from 'react';
 import Container from 'react-bootstrap/esm/Container';
 import {Col, Row} from "react-bootstrap";
 
-import parcel from "../parcel.png";
+import parcel from "../images/parcel.png";
 import {
   CreateArchiveStatus,
   ICreateArchiveResponse,

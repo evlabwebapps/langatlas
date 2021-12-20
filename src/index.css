@@ -36,3 +36,9 @@ code {
     font-weight: bold;
     color: white;
 }
+
+.galleryControlBtn {
+    font-size: 2em;
+    flex-basis: 5%;
+    cursor: pointer;
+}
