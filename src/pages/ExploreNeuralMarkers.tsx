@@ -121,9 +121,9 @@ export default function ExploreNeuralMarkers() {
       <div className="d-flex flex-column align-content-center justify-content-center">
         <ExploreNeuralMarkersText/>
         <SummaryDemographics selectedRows={histogramRows}/>
-        <BoxPlot data={csvTable?.csvData}/>
+        <BoxPlot data={histogramRows}/>
         <Histogram data={histogramRows || []} columns={histogramColumns || []}/>
-        <div className="d-flex align-items-center" style={{marginBottom: '1rem', width: '100%'}}>
+        <div className="d-flex align-items-center my-2 w-100">
           {
             (selectedRows.length > 0) &&
             <div style={{marginRight: '0.5rem'}}>
