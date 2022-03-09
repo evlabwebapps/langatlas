@@ -1,6 +1,7 @@
 {
   "name": "langatlas",
   "version": "0.1.0",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "@inovua/reactdatagrid-community": "^4.5.1",

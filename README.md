@@ -1,9 +1,9 @@
 # LanA
 
 ## How to add a new page
-Navigation bar is defined at `./components/Navigation.tsx` file. In order to add 
+Navigation bar is defined at `./components/Navigation.jsx` file. In order to add 
 a new page to navbar you must define a new page inside `./pages` and add route 
-at `routes.ts` file. Also do not forget to export page by updating `./pages/index.tsx`.
+at `routes.js` file. Also do not forget to export page by updating `./pages/index.jsx`.
 
 ## How to build and push image to DockerHub
 

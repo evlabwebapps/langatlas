@@ -6,6 +6,10 @@ type GalleryProps = {
   experiments?: IRow[];
 };
 
+function getImageLink(image_path: string) {
+  return process.env.REACT_APP_BACKEND_URL + "/compressed_" + image_path.slice(0, -3) + "jpg"
+}
+
 export default function Gallery(props: GalleryProps) {
   const [experiments, setExperiments] = useState<IRow[]>([]);
   const [currentExperiment, setCurrentExperiment] = useState<number | null>(null);
@@ -32,7 +36,7 @@ export default function Gallery(props: GalleryProps) {
     return <></>;
   }
 
-  return <>
+  return <div className="d-flex flex-column align-items-center">
     <div className="d-flex justify-content-around align-items-center mb-1">
       {(currentExperiment > 0 &&
           <div className="galleryControlBtn" onClick={nextImage(-1)}>
@@ -40,15 +44,23 @@ export default function Gallery(props: GalleryProps) {
           </div>
       ) || <div style={{flexBasis: '5%'}} />}
       <div className="d-flex flex-column align-items-center">
-        <img height="200" src={process.env.REACT_APP_BACKEND_URL + "/" + experiments[currentExperiment].SPM_T_png}
+        <img height="200" src={getImageLink(experiments[currentExperiment].SPM_T_png)}
              alt={"SPM " + currentExperiment} />
         <div className="flex-row align-content-center">
-          <img height="200" src={process.env.REACT_APP_BACKEND_URL + "/" + experiments[currentExperiment].FS_sig_lh_png}
+          <img height="200" src={getImageLink(experiments[currentExperiment].FS_sig_lh_png)}
                alt={"LH FS " + currentExperiment} />
-          <img height="200" src={process.env.REACT_APP_BACKEND_URL + "/" + experiments[currentExperiment].FS_sig_rh_png}
+          <img height="200" src={getImageLink(experiments[currentExperiment].FS_sig_rh_png)}
                alt={"RH FS " + currentExperiment} />
         </div>
-        <div className="alert alert-primary flex-grow-1">
+
+      </div>
+      {(currentExperiment < experiments.length - 1 &&
+          <div className="galleryControlBtn" onClick={nextImage(1)}>
+              <ArrowRight />
+          </div>
+      ) || <div/>}
+    </div>
+    <div className="alert alert-dark flex-grow-0 mt-5" style={{width: '300px'}}>
           <table>
             <tr>
               <td className={"p-1"}><b>UID</b></td>
@@ -80,12 +92,5 @@ export default function Gallery(props: GalleryProps) {
             </tr>
           </table>
         </div>
-      </div>
-      {(currentExperiment < experiments.length - 1 &&
-          <div className="galleryControlBtn" onClick={nextImage(1)}>
-              <ArrowRight />
-          </div>
-      ) || <div style={{flexBasis: '5%'}} />}
-    </div>
-  </>;
+  </div>;
 };

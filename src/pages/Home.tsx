@@ -1,7 +1,6 @@
 import React from "react";
 import {Container} from "react-bootstrap";
-import SPM from "../images/SPM.gif";
-import FS from "../images/FS.gif";
+import FSP from "../images/FSP.gif";
 
 export default function Home() {
   return (
@@ -11,7 +10,7 @@ export default function Home() {
         LanA (<b>Lan</b>guage <b>A</b>tlas) is the Fedorenko Lab probabilistic atlas of the
         language network created based on language localizer data from &gt;800 individuals.
       </p>
-      <div className="alert alert-primary">
+      <div className="alert alert-dark">
         <h4 className="alert-heading">Citation</h4>
         Lipkin B, Tuckute G, Affourtit J, Small H, Mineroff Z, Kean H, Jouravlev O, Rakocevic L,
         Pitchett B, Siegelman M, Hoeflin C, Pongos A, Blank I, Kline M, Ivanova A, Shannon S,
@@ -19,8 +18,7 @@ export default function Home() {
         atlas for the language network based on data from &gt;800 individuals.
       </div>
       <div className="d-flex justify-content-around align-items-center mb-1 mr-1">
-        <img height="350" src={SPM} alt="SPM animation" />
-        <img height="350" src={FS} alt="FS animation" />
+        <img height="300" src={FSP} alt="FSP animation" />
       </div>
       <p>
         <h3>Common uses</h3>
@@ -33,23 +31,23 @@ export default function Home() {
           For example, LanA enables you to:
           <ol type="i">
             <li>
-              estimate the probability that an activation peak / cluster from a group-averaging
-              study falls within the language network;
+              estimate the probability that <u>an activation peak / cluster from a group-averaging
+              study</u> falls within the language network;
             </li>
             <li>
-              estimate the probability that a peak / cluster from a meta-analysis of activation
-              peaks falls within the language network;
+              estimate the probability that <u>a peak / cluster from a meta-analysis of activation
+              peaks</u> falls within the language network;
             </li>
             <li>
-              estimate the probability that a patient’s lesion or lesion overlap location (as
+              estimate the probability that <u>a patient’s lesion or lesion overlap location</u> (as
               estimated in VBM/VLSM approaches) falls within the language network;
             </li>
             <li>
-              estimate the probability that an ECoG/SEEG electrode is placed within the
+              estimate the probability that <u>an ECoG/SEEG electrode</u> is placed within the
               language network;
             </li>
             <li>
-              estimate the probability that source-localized MEG activation cluster falls within
+              estimate the probability that <u>source-localized MEG activation cluster</u> falls within
               the language network.
             </li>
           </ol>

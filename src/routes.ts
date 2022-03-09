@@ -8,14 +8,14 @@ export const routes = [
     child: Home
   },
   {
-    path: "/explore-neural-markers",
-    label: "Explore Neural Markers",
-    child: ExploreNeuralMarkers
-  },
-  {
     path: "/explore-activation-maps",
     label: "Explore Activation Maps",
     child: ExploreActivationMaps
+  },
+  {
+    path: "/explore-neural-markers",
+    label: "Explore Neural Markers",
+    child: ExploreNeuralMarkers
   },
   {
     path: "/download",

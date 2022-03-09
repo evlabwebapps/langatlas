@@ -1,9 +1,7 @@
 import React, {useState, useEffect, useCallback, useMemo} from 'react';
 
-import Container from 'react-bootstrap/esm/Container';
 import {Col, Row} from "react-bootstrap";
 
-import parcel from "../images/parcel.png";
 import {
   CreateArchiveStatus,
   ICreateArchiveResponse,
@@ -81,6 +79,11 @@ export default function ExploreNeuralMarkers() {
     setSelectedRowsForHistogram(selectedRows);
   }, [selectedRows]);
 
+  useEffect(() => {
+    setSelectedRowsForHistogram(selectedRows);
+  }, [selectedRows]);
+
+
   const histogramRows = useMemo(() =>
       selectedRowsForHistogram.length > 0
         ? csvTable?.csvData?.filter(row => selectedRowsForHistogram.includes(row['UID']))
@@ -128,6 +131,12 @@ export default function ExploreNeuralMarkers() {
             (selectedRows.length > 0) &&
             <div style={{marginRight: '0.5rem'}}>
               {selectedRows.length} participant{selectedRows.length > 1 ? "s" : ""} selected
+            </div>
+          }
+          {
+            (selectedRows.length === 0) &&
+            <div style={{marginRight: '0.5rem'}}>
+              {selectedRows.length} participants showed
             </div>
           }
           <div className="flex-grow-1">

@@ -13,7 +13,7 @@ export default function DownloadAlert(props: DownloadAlertProps) {
           <Spinner animation="border" role="status" size="sm">
             <span className="visually-hidden">Loading...</span>
           </Spinner>&nbsp;
-          Please wait while data is being packaged.
+          Please wait while data is being packaged. This may take a few minutes.
         </Alert>
       );
     case "success":

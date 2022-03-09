@@ -18,17 +18,34 @@ code {
 
 .bigDownloadBtn {
     display: inherit;
-    background-image: linear-gradient(to bottom, rgba(36, 66, 255, 0.52), rgba(75, 1, 1, 0.73)), url(https://images.unsplash.com/photo-1617791160536-598cf32026fb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1664&q=80);
+    background-size: contain;
+    background-repeat: no-repeat;
     background-position: center;
+    border-radius: 20px;
     height: 200px;
     width: 40%;
-    margin-bottom: 10px;
-    margin-right: 10px;
+    margin-bottom: 20px;
+    margin-right: 20px;
     align-items: center;
     cursor: pointer;
     text-decoration: none;
 }
 
+.downloadSPMAll {
+    background-image: linear-gradient(to top right, rgba(36, 66, 255, 0.32), rgba(75, 1, 1, 0.32)), url(images/d_spm_all.png);
+}
+
+.downloadFSAll {
+    background-image: linear-gradient(to top left, rgba(36, 66, 255, 0.32), rgba(75, 1, 1, 0.32)), url(images/d_fs_all.png);
+}
+
+.downloadSPMAtlas {
+    background-image: linear-gradient(to bottom right, rgba(36, 66, 255, 0.32), rgba(75, 1, 1, 0.32)), url(images/d_spm_atlas.png);
+}
+
+.downloadFSAtlas {
+    background-image: linear-gradient(to bottom left, rgba(36, 66, 255, 0.32), rgba(75, 1, 1, 0.32)), url(images/d_fs_atlas.png);
+}
 .bigDownloadBtn p {
     text-align: center;
     width: 100%;
@@ -40,5 +57,17 @@ code {
 .galleryControlBtn {
     font-size: 2em;
     flex-basis: 5%;
+    cursor: pointer;
+}
+
+.statsBox {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    width: auto !important;
+}
+
+.statsBox tr:hover {
+    font-weight: 500;
     cursor: pointer;
 }

@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {MutableRefObject, useCallback, useEffect, useRef, useState} from 'react';
 
 import ReactDataGrid from '@inovua/reactdatagrid-community';
 import '@inovua/reactdatagrid-community/index.css'
@@ -9,6 +9,8 @@ import DateFilter from "@inovua/reactdatagrid-community/DateFilter";
 
 import {IColumn, IRow} from "../types/CSV";
 import SelectFilter from "@inovua/reactdatagrid-community/SelectFilter";
+import {TypeComputedProps} from "@inovua/reactdatagrid-community/types";
+import {TypeFilterValue, TypeSingleFilterValue} from "@inovua/reactdatagrid-community/types/TypeFilterValue";
 
 type CSVTableProps = {
   rows: IRow[];
@@ -96,12 +98,32 @@ const getGridFilterValue = (columns: IColumn[]) =>
 
 export default function CSVTable(props: CSVTableProps) {
   const [selected, setSelected] = useState({});
-
   const onSelectionChange = useCallback(({selected}) => {
     setSelected(selected);
     // @ts-ignore
     props.onSelectionChange(Object.values(selected).map(row => row['UID']));
   }, [props]);
+
+  const onFilterValueChange = (filterValues: TypeFilterValue) => {
+    if (!filterValues) return;
+
+    const checkFilter = (row: IRow, filterValue: TypeSingleFilterValue) => {
+      const value = row[filterValue.name];
+      if (filterValue.operator == "inrange") {
+        return value <= (filterValue.value?.end || Number.MAX_VALUE) &&
+            value >= (filterValue.value?.start || 0);
+      }
+      return value === filterValue.value;
+    }
+
+    let result = props.rows;
+    filterValues.forEach((filterValue) => {
+      if (!filterValue.value) return;
+      result = result.filter(row => checkFilter(row, filterValue));
+    })
+
+    props.onSelectionChange(Object.values(result).map(row => row['UID']));
+  }
 
   const gridStyle = {minHeight: 550, overflowY: 'hidden'};
   const columns = getGridColumns(props.columns);
@@ -118,6 +140,7 @@ export default function CSVTable(props: CSVTableProps) {
         selected={selected}
         checkboxColumn
         onSelectionChange={onSelectionChange}
+        onFilterValueChange={onFilterValueChange}
         style={gridStyle}
         nativeScroll={true}
       />
