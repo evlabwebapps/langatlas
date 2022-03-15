@@ -8,7 +8,7 @@ import {
   ICSVTable,
   IDownloadOption,
 } from '../types/CSV';
-import CSVTableService from "../services/CSVTableService";
+import LangAtlasService from "../services/LangAtlasService";
 import CSVTable from '../components/CSVTable';
 import DownloadAlert, {DownloadAlertProps} from "../components/DownloadAlert";
 import TableActions from "../components/TableActions";
@@ -29,15 +29,15 @@ export default function ExploreNeuralMarkers() {
   const [downloadAlertProps, setDownloadAlertProps] = useState<DownloadAlertProps>({status: "hidden"});
 
   useEffect(() => {
-    CSVTableService.get(table_name)
+    LangAtlasService.getCSVTable(table_name)
       .then((table: ICSVTable) => setCSVTable(table));
-    CSVTableService.getDownloadOptions(table_name)
+    LangAtlasService.getDownloadOptions(table_name)
       .then((response: any) => setDownloadOptions(response.data));
   }, []);
 
   const waitArchive = (data: ICreateArchiveResponse) => {
     setTimeout(function run() {
-      CSVTableService.getArchive(data.id)
+      LangAtlasService.getArchive(data.id)
         .then((response: any) => {
           if (response.data.status === CreateArchiveStatus.Pending ||
             response.data.status === CreateArchiveStatus.Created) {
@@ -68,7 +68,7 @@ export default function ExploreNeuralMarkers() {
       setDownloadAlertProps({status: "pending"});
       setLoading(true);
 
-      CSVTableService.createArchive({
+      LangAtlasService.createArchive({
         download_batch: option.id,
         rows: selectedRows
       }).then((response: any) => waitArchive(response.data));

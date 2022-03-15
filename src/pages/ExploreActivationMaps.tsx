@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {ICSVTable} from "../types/CSV";
-import CSVTableService from "../services/CSVTableService";
+import LangAtlasService from "../services/LangAtlasService";
 import Gallery from "../components/Gallery";
 import ExploreActivationMapsText from "../texts/ExploreActivationMapsText";
 
@@ -9,7 +9,7 @@ export default function ExploreActivationMaps(props: any) {
     const [csvTable, setCSVTable] = useState<ICSVTable | null>(null);
 
     useEffect(() => {
-        CSVTableService.get(table_name)
+        LangAtlasService.getCSVTable(table_name)
             .then((table: ICSVTable) => setCSVTable(table));
     }, []);
 

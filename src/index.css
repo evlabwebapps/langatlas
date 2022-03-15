@@ -46,12 +46,32 @@ code {
 .downloadFSAtlas {
     background-image: linear-gradient(to bottom left, rgba(36, 66, 255, 0.32), rgba(75, 1, 1, 0.32)), url(images/d_fs_atlas.png);
 }
+
+.bigDownloadBtn {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+}
+
 .bigDownloadBtn p {
     text-align: center;
     width: 100%;
     font-size: 2em;
     font-weight: bold;
     color: white;
+    text-shadow: 0 0 10px #333333;
+}
+
+.downloadCounter {
+    width: 100%;
+    height: 25px;
+    margin-top: -20px;
+    border-radius: 0 0 20px 20px;
+    color: white;
+    background-color: rgba(0, 32, 255, 0.2);
+    font-weight: bold;
+    text-align: center;
 }
 
 .galleryControlBtn {
@@ -70,4 +90,11 @@ code {
 .statsBox tr:hover {
     font-weight: 500;
     cursor: pointer;
+}
+
+.bigDownloadBtnLabelWrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

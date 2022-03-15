@@ -6,7 +6,7 @@ import {
   IDownloadOption,
   ICreateArchiveRequest,
   ICreateArchiveResponse,
-  IColumn, IRow
+  IColumn, IRow, IDownloadCounter, ISiteText
 } from "../types/CSV";
 import {csv} from "d3";
 
@@ -23,7 +23,7 @@ const parseRow = (columnOptions: IColumn[]) => (row: IRow) => {
   return row;
 };
 
-const get = (table_name: string) => {
+const getCSVTable = (table_name: string) => {
   const getTable = (table_name: string) =>
     http.get<ICSVTable>("/csv_tables/" + table_name + "/")
       .then(response => response.data);
@@ -50,11 +50,26 @@ const getArchive = (archive_id: string) => {
   return http.get<Array<ICreateArchiveResponse>>("/downloads/" + archive_id + "/");
 }
 
-const CSVTableService = {
-  get,
+const countDownloaded = (downloadName: string) => {
+  return http.post<IDownloadCounter>("/download_counters/", {name: downloadName});
+}
+
+const getDownloadCounters = () => {
+  return http.get<Array<IDownloadCounter>>("/download_counters/");
+}
+
+const getTexts = () => {
+  return http.get<Array<ISiteText>>("/texts/");
+}
+
+const LangAtlasService = {
+  getCSVTable,
   getDownloadOptions,
   createArchive,
   getArchive,
+  countDownloaded,
+  getDownloadCounters,
+  getTexts
 };
 
-export default CSVTableService;
+export default LangAtlasService;

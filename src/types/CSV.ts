@@ -1,4 +1,5 @@
 import {DSVParsedArray} from "d3";
+import internal from "stream";
 
 export interface IColumn {
   field: string;
@@ -63,4 +64,14 @@ export interface ICSVData<T> {
 export interface IDownloadOption {
   id: string;
   title: string;
+}
+
+export interface IDownloadCounter {
+  name: string;
+  counter: number;
+}
+
+export interface ISiteText {
+  key: string;
+  value: string;
 }
