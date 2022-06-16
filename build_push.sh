@@ -2,5 +2,5 @@
 
 yarn build
 
-docker build --tag aamirov/evlabwebapps-langatlas:latest .
-docker push aamirov/evlabwebapps-langatlas:latest
+sudo docker build --tag fedorenkolanguagelab/evlabwebapps-langatlas:latest .
+sudo docker push fedorenkolanguagelab/evlabwebapps-langatlas:latest
